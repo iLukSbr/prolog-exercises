@@ -1,0 +1,30 @@
+:-dynamic idoso/0, baixaRenda/0, propApto/0, propCasa/0.
+pgIptuApto :- propApto.
+pgIptuCasa :- propCasa.
+imovelUnico :- propApto, not(propCasa).
+imovelUnico :- propCasa, not(propApto).
+isento :- imovelUnico, baixaRenda, idoso. 
+
+%% o operador cut (!) eh utilizado para que o motor de inferencia nao tente provar
+%% casos que sao mutuamente excludentes: 1 com 2, 3 e 4 ou que se sobrepõem: 2 com 3 e 4
+
+%% caso 1: isento
+pagarIPTU :- 
+    assert(idoso),
+    assert(baixaRenda),
+    assert(propApto),
+    assert(propCasa),
+    isento, writeln('\n*** nao pagar IPTU ***'), !.
+
+%% caso 2: pagar iptu da casa e do apartamento
+pagarIPTU :-  
+    pgIptuApto, writeln('\n*** pagar iptu apartamento ***'),
+    pgIptuCasa, writeln('\n*** pagar iptu casa ***'), !.
+
+%% caso 3: pagar iptu do apto somente
+pagarIPTU :- 
+    pgIptuApto, writeln('\n*** pagar iptu apartamento ***'), !.
+
+%% casp 4: pagar iptu da casa somente
+pagarIPTU :-
+    pgIptuCasa, writeln('\n*** pagar iptu casa ***'), !.
